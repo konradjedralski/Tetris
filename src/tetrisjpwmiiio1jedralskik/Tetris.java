@@ -54,7 +54,7 @@ public class Tetris extends javax.swing.JFrame {
 
         instructionText.setFont(new java.awt.Font("Garamond", 0, 14)); // NOI18N
         instructionText.setForeground(new java.awt.Color(255, 255, 255));
-        instructionText.setText("<html> <br><font size=8><b><u>Instrukcja</u></b></font></br> <br</br> <br><u>Opis rozgrywki</u></br> <br>Gra polega na układaniu spadających klocków tak, aby utworzyć</br> <br>jak najwięcej pełnych linii, które będą się usuwały. Koniec rozgrywki</br> <br>nastąpi w momencie, kiedy jakaś figura dotknie końca planszy.</br> <br></br> <br><u>Nawigacja</u></br> <br><b>1. </b>Aby uruchomić grę naciśnij \"Start\" lub kliknij \"ENTER\".</br> <br><b>2. </b>W lewo: \"LEFT\".</br> <br><b>3. </b>W prawo: \"RIGHT\".</br> <br><b>4. </b>Rotacja w prawo: \"UP\".</br> <br><b>5. </b>Rotacja w lewo: \"DOWN\".</br> <br><b>6. </b>Upuszczenie klocka o jedną linię niżej (przyspieszenie): \"D\".</br> <br><b>7. </b>Upuszczenie klocka na sam dół: \"SPACE\".</br> <br><b>8. </b>Pauza: \"P\".</br> </html>");
+        instructionText.setText("<html> <br><font size=8><b><u>Instrukcja</u></b></font></br> <br</br> <br><u>Opis rozgrywki</u></br> <br>Gra polega na układaniu spadających klocków tak, aby utworzyć</br> <br>jak najwięcej pełnych linii, które będą się usuwały. Koniec rozgrywki</br> <br>nastąpi w momencie, kiedy jakaś figura dotknie końca planszy.</br> <br></br> <br><u>Nawigacja</u></br> <br><b>1. </b>Aby uruchomić grę naciśnij \"Start\".</br> <br><b>2. </b>W lewo: \"LEFT\".</br> <br><b>3. </b>W prawo: \"RIGHT\".</br> <br><b>4. </b>Rotacja w prawo: \"UP\".</br> <br><b>5. </b>Rotacja w lewo: \"DOWN\".</br> <br><b>6. </b>Upuszczenie klocka o jedną linię niżej (przyspieszenie): \"D\".</br> <br><b>7. </b>Upuszczenie klocka na sam dół: \"SPACE\".</br> <br><b>8. </b>Pauza: \"P\".</br> </html>");
         instructionText.setVerticalAlignment(javax.swing.SwingConstants.TOP);
         instructionText.setMinimumSize(new java.awt.Dimension(421, 313));
 
@@ -224,9 +224,6 @@ public class Tetris extends javax.swing.JFrame {
                 break;
             case 68:
                 board.oneLineDown(); //Przesunięcie klocka o jedna linię w dół - przyspieszenie spadania (klawisz D)
-                break;
-            case 10:
-                board.start(); //Start gry (klawisz ENTER)
                 break;
             default:
                 break;
