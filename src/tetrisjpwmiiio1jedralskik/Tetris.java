@@ -46,7 +46,7 @@ public class Tetris extends javax.swing.JFrame {
         instruction.setTitle("Instruction");
         instruction.setFocusable(false);
         instruction.setFocusableWindowState(false);
-        instruction.setLocation(new java.awt.Point(0, 0));
+        instruction.setLocation(new java.awt.Point(200, 100));
         instruction.setMaximumSize(new java.awt.Dimension(453, 435));
         instruction.setMinimumSize(new java.awt.Dimension(453, 435));
         instruction.setPreferredSize(new java.awt.Dimension(453, 435));
@@ -89,6 +89,7 @@ public class Tetris extends javax.swing.JFrame {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Tetris");
+        setLocation(new java.awt.Point(600, 300));
         setMaximumSize(new java.awt.Dimension(500, 524));
         setMinimumSize(new java.awt.Dimension(500, 524));
         setResizable(false);
