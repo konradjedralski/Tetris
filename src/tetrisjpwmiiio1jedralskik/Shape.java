@@ -2,14 +2,14 @@ package tetrisjpwmiiio1jedralskik;
 
 import java.util.Random;
 
-public class Shape {
+public final class Shape {
 
     enum Tetrominoes {
         NoShape, ZShape, SShape, LineShape, TShape, SquareShape, LShape, MirroredLShape
     };
 
     private Tetrominoes pieceShape;
-    private int coords[][];
+    private final int coords[][];
     private int[][][] coordsTable;
 
     public Shape() {

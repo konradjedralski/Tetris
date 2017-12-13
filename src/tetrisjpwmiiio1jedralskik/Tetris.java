@@ -1,7 +1,10 @@
 package tetrisjpwmiiio1jedralskik;
 
 import java.awt.Color;
+import java.net.URL;
+import javafx.scene.media.AudioClip;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 
 /**
  *
@@ -9,11 +12,20 @@ import javax.swing.JLabel;
  */
 public class Tetris extends javax.swing.JFrame {
 
+    private URL rotation;
+    private final AudioClip audioRotation;
+
     public Tetris() {
         initComponents();
         this.getContentPane().setBackground(Color.DARK_GRAY);
         board.setParent(this);
-        score.setText(String.valueOf(0));
+        scoreLabel.setText(String.valueOf(0));
+        try {
+            rotation = Tetris.class.getResource("/tetrisjpwmiiio1jedralskik/resources/rotation.mp3");
+        } catch (Exception ex) {
+            JOptionPane.showMessageDialog(rootPane, ex, "ERROR!", ERROR);
+        }
+        audioRotation = new AudioClip(rotation.toString());
     }
 
     @SuppressWarnings("unchecked")
@@ -24,23 +36,30 @@ public class Tetris extends javax.swing.JFrame {
         instructionText = new javax.swing.JLabel();
         buttonCloseInstruction = new javax.swing.JButton();
         board = new tetrisjpwmiiio1jedralskik.Board();
-        scoreTitle = new javax.swing.JLabel();
+        pauseLabel = new javax.swing.JLabel();
+        scoreTitleLabel = new javax.swing.JLabel();
         author = new javax.swing.JLabel();
-        score = new javax.swing.JLabel();
+        scoreLabel = new javax.swing.JLabel();
         buttonStart = new javax.swing.JButton();
         buttonInstruction = new javax.swing.JButton();
 
         instruction.setTitle("Instruction");
-        instruction.setMaximumSize(new java.awt.Dimension(400, 400));
-        instruction.setMinimumSize(new java.awt.Dimension(400, 400));
-        instruction.setPreferredSize(new java.awt.Dimension(400, 400));
+        instruction.setFocusable(false);
+        instruction.setFocusableWindowState(false);
+        instruction.setLocation(new java.awt.Point(0, 0));
+        instruction.setMaximumSize(new java.awt.Dimension(453, 435));
+        instruction.setMinimumSize(new java.awt.Dimension(453, 435));
+        instruction.setPreferredSize(new java.awt.Dimension(453, 435));
         instruction.setResizable(false);
 
-        instructionText.setFont(new java.awt.Font("Dialog", 0, 18)); // NOI18N
+        instructionText.setFont(new java.awt.Font("Garamond", 0, 14)); // NOI18N
         instructionText.setForeground(new java.awt.Color(255, 255, 255));
-        instructionText.setText("Instrukcja: ");
+        instructionText.setText("<html> <br><font size=8><b><u>Instrukcja</u></b></font></br> <br</br> <br><u>Opis rozgrywki</u></br> <br>Gra polega na układaniu spadających klocków tak, aby utworzyć</br> <br>jak najwięcej pełnych linii, które będą się usuwały. Koniec rozgrywki</br> <br>nastąpi w momencie, kiedy jakaś figura dotknie końca planszy.</br> <br></br> <br><u>Nawigacja</u></br> <br><b>1. </b>Aby uruchomić grę naciśnij \"Start\" lub kliknij \"ENTER\".</br> <br><b>2. </b>W lewo: \"LEFT\".</br> <br><b>3. </b>W prawo: \"RIGHT\".</br> <br><b>4. </b>Rotacja w prawo: \"UP\".</br> <br><b>5. </b>Rotacja w lewo: \"DOWN\".</br> <br><b>6. </b>Upuszczenie klocka o jedną linię niżej (przyspieszenie): \"D\".</br> <br><b>7. </b>Upuszczenie klocka na sam dół: \"SPACE\".</br> <br><b>8. </b>Pauza: \"P\".</br> </html>");
+        instructionText.setVerticalAlignment(javax.swing.SwingConstants.TOP);
+        instructionText.setMinimumSize(new java.awt.Dimension(421, 313));
 
-        buttonCloseInstruction.setText("Close and resume game");
+        buttonCloseInstruction.setText("Close and back to the game");
+        buttonCloseInstruction.setFocusable(false);
         buttonCloseInstruction.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 buttonCloseInstructionActionPerformed(evt);
@@ -54,18 +73,16 @@ public class Tetris extends javax.swing.JFrame {
             .addGroup(instructionLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(instructionLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(instructionLayout.createSequentialGroup()
-                        .addComponent(instructionText)
-                        .addGap(0, 0, Short.MAX_VALUE))
-                    .addComponent(buttonCloseInstruction, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 377, Short.MAX_VALUE))
+                    .addComponent(instructionText, javax.swing.GroupLayout.DEFAULT_SIZE, 429, Short.MAX_VALUE)
+                    .addComponent(buttonCloseInstruction, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
         instructionLayout.setVerticalGroup(
             instructionLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(instructionLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(instructionText)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 303, Short.MAX_VALUE)
+                .addComponent(instructionText, javax.swing.GroupLayout.PREFERRED_SIZE, 323, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(buttonCloseInstruction, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
@@ -76,9 +93,20 @@ public class Tetris extends javax.swing.JFrame {
         setMinimumSize(new java.awt.Dimension(500, 524));
         setResizable(false);
 
-        scoreTitle.setFont(new java.awt.Font("Garamond", 0, 25)); // NOI18N
-        scoreTitle.setForeground(new java.awt.Color(255, 0, 0));
-        scoreTitle.setText("Score:");
+        board.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                boardKeyPressed(evt);
+            }
+        });
+
+        pauseLabel.setFont(new java.awt.Font("Garamond", 3, 48)); // NOI18N
+        pauseLabel.setForeground(new java.awt.Color(255, 255, 255));
+        board.add(pauseLabel);
+        pauseLabel.setBounds(60, 30, 160, 60);
+
+        scoreTitleLabel.setFont(new java.awt.Font("Garamond", 0, 25)); // NOI18N
+        scoreTitleLabel.setForeground(new java.awt.Color(255, 0, 0));
+        scoreTitleLabel.setText("Score:");
 
         author.setFont(new java.awt.Font("Dialog", 0, 10)); // NOI18N
         author.setForeground(new java.awt.Color(255, 255, 255));
@@ -87,10 +115,11 @@ public class Tetris extends javax.swing.JFrame {
         author.setFocusable(false);
         author.setInheritsPopupMenu(false);
 
-        score.setFont(new java.awt.Font("Garamond", 0, 25)); // NOI18N
-        score.setForeground(new java.awt.Color(255, 0, 0));
+        scoreLabel.setFont(new java.awt.Font("Garamond", 0, 25)); // NOI18N
+        scoreLabel.setForeground(new java.awt.Color(255, 0, 0));
 
         buttonStart.setText("Start");
+        buttonStart.setFocusable(false);
         buttonStart.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 buttonStartActionPerformed(evt);
@@ -98,6 +127,7 @@ public class Tetris extends javax.swing.JFrame {
         });
 
         buttonInstruction.setText("Show instruction");
+        buttonInstruction.setFocusable(false);
         buttonInstruction.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 buttonInstructionActionPerformed(evt);
@@ -114,9 +144,9 @@ public class Tetris extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(scoreTitle, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(scoreTitleLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(score, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addComponent(scoreLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                     .addComponent(buttonStart, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(buttonInstruction, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
@@ -131,8 +161,8 @@ public class Tetris extends javax.swing.JFrame {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(scoreTitle, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(score, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(scoreTitleLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(scoreLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(buttonStart, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
@@ -147,7 +177,6 @@ public class Tetris extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void buttonInstructionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonInstructionActionPerformed
-        board.pause();
         instruction.getContentPane().setBackground(Color.DARK_GRAY);
         instruction.setVisible(true);
     }//GEN-LAST:event_buttonInstructionActionPerformed
@@ -158,11 +187,49 @@ public class Tetris extends javax.swing.JFrame {
 
     private void buttonCloseInstructionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonCloseInstructionActionPerformed
         instruction.setVisible(false);
-        board.pause();
     }//GEN-LAST:event_buttonCloseInstructionActionPerformed
 
-    public JLabel getScore() {
-        return score;
+    private void boardKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_boardKeyPressed
+        //to do usuniecia
+        System.out.println("keycode: " + evt.getKeyCode());
+        switch (evt.getKeyCode()) {
+            case 80:
+                board.pause(); //Pauza (klawisz P)
+                break;
+            case 37:
+                board.tryMove(board.curPiece, board.curX - 1, board.curY); //W Lewo (strzałka w lewo)
+                break;
+            case 39:
+                board.tryMove(board.curPiece, board.curX + 1, board.curY); //W prawo (strzałka w prawo)
+                break;
+            case 40:
+                board.tryMove(board.curPiece.rotateLeft(), board.curX, board.curY); //Rotacja w lewo (strzałka w dół)
+                audioRotation.play();
+                break;
+            case 38:
+                board.tryMove(board.curPiece.rotateRight(), board.curX, board.curY); //Rotacja w prawo (strzałka w górę)
+                audioRotation.play();
+                break;
+            case 32:
+                board.dropDown(); //Upuszczenie klocka na sam dół (spacja)
+                break;
+            case 68:
+                board.oneLineDown(); //Przesunięcie klocka o jedna linię w dół - przyspieszenie spadania (klawisz D)
+                break;
+            case 10:
+                board.start(); //Start gry (klawisz ENTER)
+                break;
+            default:
+                break;
+        }
+    }//GEN-LAST:event_boardKeyPressed
+
+    public JLabel getScoreLabel() {
+        return scoreLabel;
+    }
+
+    public JLabel getPauseLabel() {
+        return pauseLabel;
     }
 
     public static void main(String args[]) {
@@ -182,7 +249,8 @@ public class Tetris extends javax.swing.JFrame {
     private javax.swing.JButton buttonStart;
     private javax.swing.JFrame instruction;
     private javax.swing.JLabel instructionText;
-    private javax.swing.JLabel score;
-    private javax.swing.JLabel scoreTitle;
+    private javax.swing.JLabel pauseLabel;
+    private javax.swing.JLabel scoreLabel;
+    private javax.swing.JLabel scoreTitleLabel;
     // End of variables declaration//GEN-END:variables
 }

@@ -8,7 +8,11 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.net.URL;
+import javafx.scene.media.AudioClip;
 import javax.imageio.ImageIO;
+import javax.swing.Icon;
+import javax.swing.ImageIcon;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -17,43 +21,61 @@ import tetrisjpwmiiio1jedralskik.Shape.Tetrominoes;
 
 public class Board extends JComponent implements ActionListener {
 
-    BufferedImage imageBackground = null;
-    int BoardWidth = 10;
-    int BoardHeight = 22;
-    int backgroundWidth = 290;
-    int backgroundHeight = 500;
-    Timer timer;
-    boolean isFallingFinished = false; //Zmienna określająca, czy kształt tetris zakończył spadanie
-    boolean isStarted = false;
-    boolean isPaused = false;
-    int numLinesRemoved = 0; //Liczba usuniętych linii
+    private BufferedImage imageBackground = null;
+    private final int BoardWidth = 10;
+    private final int BoardHeight = 22;
+    private final int backgroundWidth = 290;
+    private final int backgroundHeight = 500;
+    private final Timer timer;
+    private boolean isFallingFinished = false; //Zmienna określająca, czy kształt tetris zakończył spadanie
+    private boolean isStarted = false;
+    private boolean isPaused = false;
+    private int numLinesRemoved = 0; //Liczba usuniętych linii
     int curX = 0; //Rzeczywista pozycja X opadającego kształtu tetris
     int curY = 0; //Rzeczywista pozycja Y opadającego kształtu tetris
     Shape curPiece;
-    Tetrominoes[] board; //board zawiera wszystkie kwadraty kawałków i pozostałości kawałków, które spadły
-    Tetris parent;
-    JLabel score;
+    private final Tetrominoes[] board; //board zawiera wszystkie kwadraty kawałków i pozostałości kawałków, które spadły
+    private Tetris parent;
+    private JLabel scoreLabel;
+    private JLabel pauseLabel;
+    private final Icon icon = new ImageIcon(Board.class.getResource("/tetrisjpwmiiio1jedralskik/resources/gameOver.png"));
+    private URL pieceDropped;
+    private URL removeFullLine;
+    private URL finishedGame;
+    private final AudioClip audioPieceDropped;
+    private final AudioClip audioRemoveFullLine;
+    private final AudioClip audioFinishedGame;
 
     public Board() {
         try {
             imageBackground = ImageIO.read(tetrisjpwmiiio1jedralskik.Board.class.getResource("/tetrisjpwmiiio1jedralskik/resources/background.jpg"));
+            pieceDropped = Board.class.getResource("/tetrisjpwmiiio1jedralskik/resources/pieceDropped.mp3");
+            removeFullLine = Board.class.getResource("/tetrisjpwmiiio1jedralskik/resources/removeFullLine.mp3");
+            finishedGame = Board.class.getResource("/tetrisjpwmiiio1jedralskik/resources/finishedGame.mp3");
         } catch (IOException ex) {
             imageBackground = new BufferedImage(backgroundWidth, backgroundHeight, BufferedImage.TYPE_INT_ARGB);
+            JOptionPane.showMessageDialog(parent, ex, "ERROR!", ERROR);
         }
+        this.setFocusable(true);
         curPiece = new Shape();
         timer = new Timer(400, this); //Timer z opóźnieniem 400ms               
         board = new Tetrominoes[BoardWidth * BoardHeight];
         clearBoard();
+        audioPieceDropped = new AudioClip(pieceDropped.toString());
+        audioRemoveFullLine = new AudioClip(removeFullLine.toString());
+        audioFinishedGame = new AudioClip(finishedGame.toString());
     }
 
-    //Metoda łącząca "JLabel score" z "JLabel score" znajdującym się w klasie Tetris
+    //Metoda łącząca JLabel z klasy Board z JLabel znajdującym się w klasie Tetris
     public void setParent(Tetris parent) {
         this.parent = parent;
-        score = this.parent.getScore();
+        scoreLabel = this.parent.getScoreLabel();
+        pauseLabel = this.parent.getPauseLabel();
     }
 
     //Metoda sprawdzająca, czy obiekt zakończył spadanie
     //Jeśli tak, tworzony zostaje nowy element, jeśli nie spadający obiekt spada o jedną linię niżej
+    @Override
     public void actionPerformed(ActionEvent e) {
         if (isFallingFinished) {
             isFallingFinished = false;
@@ -78,9 +100,8 @@ public class Board extends JComponent implements ActionListener {
 
     public void start() {
         if (isPaused) {
-            return;
+            return; //Podczas pauzy nie można startować gry
         }
-
         isStarted = true;
         isFallingFinished = false;
         numLinesRemoved = 0;
@@ -90,22 +111,23 @@ public class Board extends JComponent implements ActionListener {
         timer.start();
     }
 
+    //Pauza uruchomiona klawiszem P
     public void pause() {
         if (!isStarted) {
-            return;
+            return; //Kiedy gra nie jets włączona nie można zrobić pauzy
         }
-
         isPaused = !isPaused;
         if (isPaused) {
             timer.stop();
-            //statusbar.setText("paused");
+            pauseLabel.setText("Paused");
         } else {
             timer.start();
-            //statusbar.setText("Score" + String.valueOf(numLinesRemoved));
+            pauseLabel.setText("");
         }
         repaint();
     }
 
+    @Override
     public void paintComponent(Graphics graph) {
         Graphics2D graph2 = (Graphics2D) graph;
         graph2.drawImage(imageBackground, 0, 0, backgroundWidth, backgroundHeight, null);
@@ -135,7 +157,7 @@ public class Board extends JComponent implements ActionListener {
 
     //Zrzucenie elementu w dół 
     //Próba upuszczenia elementu o jedną linię, aż znajdzie się na samym dole planszy lub, na górze poprzeniego elementu
-    private void dropDown() {
+    public void dropDown() {
         int newY = curY;
         while (newY > 0) {
             if (!tryMove(curPiece, curX, newY - 1)) {
@@ -147,7 +169,7 @@ public class Board extends JComponent implements ActionListener {
     }
 
     //Upuszczenie obiektu o jedną linię w dół
-    private void oneLineDown() {
+    public void oneLineDown() {
         if (!tryMove(curPiece, curX, curY - 1)) {
             pieceDropped();
         }
@@ -171,6 +193,8 @@ public class Board extends JComponent implements ActionListener {
             board[(y * BoardWidth) + x] = curPiece.getShape();
         }
 
+        audioPieceDropped.play();
+
         removeFullLines();
 
         if (!isFallingFinished) {
@@ -192,13 +216,14 @@ public class Board extends JComponent implements ActionListener {
             curPiece.setShape(Tetrominoes.NoShape);
             timer.stop();
             isStarted = false;
-            JOptionPane.showMessageDialog(parent, "Your game is finished!\nScore: " + String.valueOf(numLinesRemoved), "GAME OVER!", HEIGHT);
+            audioFinishedGame.play();
+            JOptionPane.showMessageDialog(parent, "Your game is finished!\nScore: " + String.valueOf(numLinesRemoved), "GAME OVER!", HEIGHT, icon);
         }
     }
 
     //Metoda starająca się przesunąć kształt tetris 
     //Metoda zwraca false, jeśli dotarła do granic planszy lub sąsiaduje z upuszczonymi już fargemntami
-    private boolean tryMove(Shape newPiece, int newX, int newY) {
+    public boolean tryMove(Shape newPiece, int newX, int newY) {
         for (int i = 0; i < 4; ++i) {
             int x = newX + newPiece.x(i);
             int y = newY - newPiece.y(i);
@@ -218,7 +243,7 @@ public class Board extends JComponent implements ActionListener {
     }
 
     //Sprawdzenie czy istnieje pełny wiersz spośród wszystkich wierszy na planszy
-    //Jeśli jest co najmniej jedna pusta inia, to jest ona usuwana i zostaje zwiększony licznik usuniętych linii
+    //Jeśli jest co najmniej jedna pusta linia, to jest ona usuwana i zostaje zwiększony licznik usuniętych linii
     //Następuje przesunięcie wszystkich linii powyżej usunietego wiersza o jedną linię w dół, co powoduje zniszczenie całej linii
     //Kwadraty mogą pozostać nad pustymi lukami (tzw. naiwna grawitacja)
     private void removeFullLines() {
@@ -239,6 +264,7 @@ public class Board extends JComponent implements ActionListener {
                 for (int k = i; k < BoardHeight - 1; ++k) {
                     for (int j = 0; j < BoardWidth; ++j) {
                         board[(k * BoardWidth) + j] = shapeAt(j, k + 1);
+                        audioRemoveFullLine.play();
                     }
                 }
             }
@@ -246,7 +272,7 @@ public class Board extends JComponent implements ActionListener {
 
         if (numFullLines > 0) {
             numLinesRemoved += numFullLines;
-            score.setText(String.valueOf(numLinesRemoved)); //Wypisywanie wyniku
+            scoreLabel.setText(String.valueOf(numLinesRemoved)); //Wypisywanie wyniku
             isFallingFinished = true;
             curPiece.setShape(Tetrominoes.NoShape);
             repaint();
