@@ -191,12 +191,20 @@ public class Tetris extends javax.swing.JFrame {
     }//GEN-LAST:event_buttonCloseInstructionActionPerformed
 
     private void boardKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_boardKeyPressed
-        //to do usuniecia
-        System.out.println("keycode: " + evt.getKeyCode());
+
+        if (!board.isStarted || board.curPiece.getShape() == Shape.Tetrominoes.NoShape) {  //Blokowanie dodania kształtu, kiedy gra nie jest włączona
+            return;
+        }
+
+        if (evt.getKeyCode() == 80) {
+            board.pause();
+            return;
+        }
+        if (board.isPaused) {
+            return;
+        }
+
         switch (evt.getKeyCode()) {
-            case 80:
-                board.pause(); //Pauza (klawisz P)
-                break;
             case 37:
                 board.tryMove(board.curPiece, board.curX - 1, board.curY); //W Lewo (strzałka w lewo)
                 break;

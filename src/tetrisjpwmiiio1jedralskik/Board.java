@@ -28,8 +28,8 @@ public class Board extends JComponent implements ActionListener {
     private final int backgroundHeight = 500;
     private final Timer timer;
     private boolean isFallingFinished = false; //Zmienna określająca, czy kształt tetris zakończył spadanie
-    private boolean isStarted = false;
-    private boolean isPaused = false;
+    boolean isStarted = false;
+    boolean isPaused = false;
     private int numLinesRemoved = 0; //Liczba usuniętych linii
     int curX = 0; //Rzeczywista pozycja X opadającego kształtu tetris
     int curY = 0; //Rzeczywista pozycja Y opadającego kształtu tetris
