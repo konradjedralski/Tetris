@@ -209,7 +209,7 @@ public class Board extends JComponent implements ActionListener {
     //Jesteśmy na szczycie, timer jest zatrzymany
     private void newPiece() {
         curPiece.setRandomShape();
-        curX = BoardWidth / 2 + 1;
+        curX = BoardWidth / 2 - 1;
         curY = BoardHeight - 1 + curPiece.minY();
 
         if (!tryMove(curPiece, curX, curY)) {
