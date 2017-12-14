@@ -192,7 +192,7 @@ public class Tetris extends javax.swing.JFrame {
 
     private void boardKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_boardKeyPressed
 
-        if (!board.isStarted || board.curPiece.getShape() == Shape.Tetrominoes.NoShape) {  //Blokowanie dodania kształtu, kiedy gra nie jest włączona
+        if (!board.isIsStarted() || board.getCurPiece().getShape() == Shape.Tetrominoes.NoShape) {  //Blokowanie dodania kształtu, kiedy gra nie jest włączona
             return;
         }
 
@@ -200,23 +200,23 @@ public class Tetris extends javax.swing.JFrame {
             board.pause();
             return;
         }
-        if (board.isPaused) {
+        if (board.isIsPaused()) {
             return;
         }
 
         switch (evt.getKeyCode()) {
             case 37:
-                board.tryMove(board.curPiece, board.curX - 1, board.curY); //W Lewo (strzałka w lewo)
+                board.tryMove(board.getCurPiece(), board.getCurX() - 1, board.getCurY()); //W Lewo (strzałka w lewo)
                 break;
             case 39:
-                board.tryMove(board.curPiece, board.curX + 1, board.curY); //W prawo (strzałka w prawo)
+                board.tryMove(board.getCurPiece(), board.getCurX() + 1, board.getCurY()); //W prawo (strzałka w prawo)
                 break;
             case 40:
-                board.tryMove(board.curPiece.rotateLeft(), board.curX, board.curY); //Rotacja w lewo (strzałka w dół)
+                board.tryMove(board.getCurPiece().rotateLeft(), board.getCurX(), board.getCurY()); //Rotacja w lewo (strzałka w dół)
                 audioRotation.play();
                 break;
             case 38:
-                board.tryMove(board.curPiece.rotateRight(), board.curX, board.curY); //Rotacja w prawo (strzałka w górę)
+                board.tryMove(board.getCurPiece().rotateRight(), board.getCurX(), board.getCurY()); //Rotacja w prawo (strzałka w górę)
                 audioRotation.play();
                 break;
             case 32:

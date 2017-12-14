@@ -28,12 +28,12 @@ public class Board extends JComponent implements ActionListener {
     private final int backgroundHeight = 500;
     private final Timer timer;
     private boolean isFallingFinished = false; //Zmienna określająca, czy kształt tetris zakończył spadanie
-    boolean isStarted = false;
-    boolean isPaused = false;
+    private boolean isStarted = false;
+    private boolean isPaused = false;
     private int numLinesRemoved = 0; //Liczba usuniętych linii
-    int curX = 0; //Rzeczywista pozycja X opadającego kształtu tetris
-    int curY = 0; //Rzeczywista pozycja Y opadającego kształtu tetris
-    Shape curPiece;
+    private int curX = 0; //Rzeczywista pozycja X opadającego kształtu tetris
+    private int curY = 0; //Rzeczywista pozycja Y opadającego kształtu tetris
+    private Shape curPiece;
     private final Tetrominoes[] board; //board zawiera wszystkie kwadraty kawałków i pozostałości kawałków, które spadły
     private Tetris parent;
     private JLabel scoreLabel;
@@ -308,4 +308,26 @@ public class Board extends JComponent implements ActionListener {
                 x + squareWidth() - 1, y + 1);
 
     }
+
+    public boolean isIsStarted() {
+        return isStarted;
+    }
+
+    public boolean isIsPaused() {
+        return isPaused;
+    }
+
+    public int getCurX() {
+        return curX;
+    }
+
+    public int getCurY() {
+        return curY;
+    }
+
+    public Shape getCurPiece() {
+        return curPiece;
+    }
+    
+    
 }
